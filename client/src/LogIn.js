@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { SERVER, getDistKM } from "./helper/Consts";
+import { SERVER, getDistM } from "./helper/Consts";
 import StringInput from "./helper/StringInput";
 import Cookies from "universal-cookie";
 import UserMain from "./UserMain";
@@ -169,8 +169,8 @@ function LogIn() {
       acc: pos.coords.accuracy,
       dist: 0
     }
-
-    my_pos.dist = getDistKM(pos.lat, pos.long, my_pos.lat, my_pos.long);
+    if(pos.lat !== 0)
+      my_pos.dist = getDistM(pos.lat, pos.long, my_pos.lat, my_pos.long);
 
     setPos(my_pos);
     setErr("");
@@ -187,7 +187,7 @@ function LogIn() {
       )
     return (
       <div className="mtb2">
-        Pos: <br />{pos.lat.toFixed(2)}/{pos.long.toFixed(2)} +/- {pos.acc.toFixed(2)}m
+        Pos: <br />{pos.lat.toFixed(2)}/{pos.long.toFixed(2)} +/- {pos.acc.toFixed(2)}m, dist from last: {pos.dist.toFixed(2)}m
       </div>
     )
   }

@@ -40,7 +40,7 @@ export const images = {
 //export const SERVER = process.env.REACT_APP_SERVER_ADDR;
 export const SERVER = "/test";
 
-export function getDistKM(lat1, lon1, lat2, lon2) {
+export function getDistM(lat1, lon1, lat2, lon2) {
     const R = 6362.15; // Radius of the earth in km at 60 degrees north
     var dLat = deg2rad(lat2-lat1);  // deg2rad below
     var dLon = deg2rad(lon2-lon1); 
@@ -50,7 +50,7 @@ export function getDistKM(lat1, lon1, lat2, lon2) {
       Math.sin(dLon/2) * Math.sin(dLon/2)
       ; 
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-    var d = R * c; // Distance in km
+    var d = R * c * 1000; // Distance in m
     return d;
   }
   
