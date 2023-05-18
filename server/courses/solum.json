@@ -1,0 +1,116 @@
+{
+    "name":"Solum",
+    "tees":["Gul", "Rød"],
+    "slope":[133, 129],
+    "verdi":[69.3, 67.6],
+    "holes":[
+        {
+            "no": 1,
+            "par": 5,
+            "length" : [461, 442],
+            "index" : 3
+        },
+        {
+            "no": 2,
+            "par": 4,
+            "length" : [304, 279],
+            "index" : 7
+        },
+        {
+            "no": 3,
+            "par": 5,
+            "length" : [474, 465],
+            "index" : 9
+        },
+        {
+            "no": 4,
+            "par": 3,
+            "length" : [190, 181],
+            "index" : 13
+        },
+        {
+            "no": 5,
+            "par": 4,
+            "length" : [294, 278],
+            "index" : 1
+        },
+        {
+            "no": 6,
+            "par": 5,
+            "length" : [451, 423],
+            "index" : 15
+        },
+        {
+            "no": 7,
+            "par": 3,
+            "length" : [131, 119],
+            "index" : 17
+        },
+        {
+            "no": 8,
+            "par": 4,
+            "length" : [352, 328],
+            "index" : 5
+        },
+        {
+            "no": 9,
+            "par": 4,
+            "length" : [321, 284],
+            "index" : 11
+        },
+        {
+            "no": 10,
+            "par": 4,
+            "length" : [335, 322],
+            "index" : 8
+        },
+        {
+            "no": 11,
+            "par": 4,
+            "length" : [246, 224],
+            "index" : 16
+        },
+        {
+            "no": 12,
+            "par": 5,
+            "length" : [466, 455],
+            "index" : 4
+        },
+        {
+            "no": 13,
+            "par": 3,
+            "length" : [118, 104],
+            "index" : 18
+        },
+        {
+            "no": 14,
+            "par": 4,
+            "length" : [360, 339],
+            "index" : 6
+        },
+        {
+            "no": 15,
+            "par": 4,
+            "length" : [321, 301],
+            "index" : 10
+        },
+        {
+            "no": 16,
+            "par": 4,
+            "length" : [290, 279],
+            "index" : 2
+        },
+        {
+            "no": 17,
+            "par": 3,
+            "length" : [115, 102],
+            "index" : 14
+        },
+        {
+            "no": 18,
+            "par": 4,
+            "length" : [271, 228],
+            "index" : 12
+        }
+    ]
+}

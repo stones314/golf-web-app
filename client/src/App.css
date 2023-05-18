@@ -1,0 +1,217 @@
+
+
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  margin-top: 20vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.trans-mid {
+  position: relative;
+  left: 50%;
+  transform: translate(-50%, 0%);
+}
+
+.narrow {
+  position: relative;
+  width: min(100vmin, 500px);
+}
+
+.wide {
+  position: relative;
+  width: min(100vmin, 800px);
+}
+
+.center {
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+
+.s_c {
+  margin: auto;
+}
+
+.mid {
+  text-align: center;
+  align-items: center;
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.f1 {
+  flex: 1;
+}
+.f2 {
+  flex: 2;
+}
+.f3 {
+  flex: 3;
+}
+.f4 {
+  flex: 4;
+}
+.f5 {
+  flex: 5;
+}
+.f6 {
+  flex: 6;
+}
+.f7 {
+  flex: 7;
+}
+.f8 {
+  flex: 8;
+}
+.f9 {
+  flex: 9;
+}
+
+.mlr3 {
+  margin-left: 1vmin;
+  margin-right: 1vmin;
+}
+.mtb2 {
+  margin-top: 1vmin;
+  margin-bottom: 1vmin;
+}
+
+
+.sel {
+  background-color: aquamarine;
+}
+
+.buy {
+  background-color: lightpink;
+}
+
+.brd {
+  border: 1px solid #000000;
+}
+
+.kat-opt {
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+.sqr {
+  width: min(5vmin, 25px);
+  height: min(5vmin, 25px);
+}
+
+.btn-img {
+  width: min(10vmin, 50px);
+}
+.icon {
+  width: 20px;
+}
+
+.txt-left {
+  text-align: left;
+}
+.txt-right {
+  text-align: right;
+}
+
+
+.items-left {
+  position: relative;
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.go-right {
+  align-self: flex-end;
+}
+
+input[type=text],input[type=number],input[type=password] {
+  font-size: 19px;
+  width: 98%;
+  height: 25px;
+  box-sizing: border-box;
+}
+
+.add_hp {
+  height: 35px;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none; 
+}
+
+.ptb {
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+form {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.big-txt {
+  font-size: x-large;
+}
+
+.fix-center {
+  position: fixed;
+  z-index: 2;
+  top: 20vmin;
+  width: min(100%,400px);
+  left: 50%;
+  transform: translate(-50%, 0%);
+}
+
+.add_h {
+  height: 15vh;
+}
+
+.cp {
+  cursor: pointer;
+}

@@ -1,0 +1,11 @@
+{
+    "club_types":[
+        {"name": "Driver", "sub_types":[]},
+        {"name": "Wood", "sub_types":["2","3","4","5","6","7"]},
+        {"name": "Hybrid", "sub_types":["1","2","3","4","5","6","7"]},
+        {"name": "Jern", "sub_types":["1","2","3","4","5","6","7","8","9"]},
+        {"name": "Wedge", "sub_types":["Pitching", "Gap", "Sand", "Lob"]},
+        {"name": "Putter", "sub_types":[]}
+    ],
+    "vendors" : ["Callaway", "Titeleist", "Tylormade", "Ping"]
+}
