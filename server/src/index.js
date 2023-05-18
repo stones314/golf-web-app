@@ -7,6 +7,13 @@ const fs = require("fs");
 // Import builtin NodeJS modules to instantiate the service
 const https = require("https");
 
+
+//middleware to log requests
+const reqLogMw = ({logger}) => (req, res, next) => {
+  logger("RECV <<<", req.method, req.url, req.hostname);
+  next();
+}
+
 ///////////////////////////////////////
 // Express stuff
 // used for normal fetch requests from client
@@ -22,6 +29,8 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 // Process application/json
 app.use(bodyParser.json());
+
+app.use(reqLogMw({logger: console.log}));
 
 // Create a NodeJS HTTPS listener on port 4000 that points to the Express app
 // Use a callback function to tell when the server is created.
@@ -80,6 +89,10 @@ cfiles.forEach(fname => {
   courses[fname] = JSON.parse(data.toString());
 });
 
+app.get("/", (req,res) => {
+  res.send({message: "Hei", uptime: process.uptime()});
+})
+
 /*
  * log-in
  * 
@@ -92,7 +105,7 @@ cfiles.forEach(fname => {
  *  user    user-data object (see json in folder users/)
  * 
  */
-app.post("/log-in", (req, res) => {
+app.post("/test/log-in", (req, res) => {
   const data = req.body;
 
   var ok = -1;
@@ -135,7 +148,7 @@ app.post("/log-in", (req, res) => {
  *  courses     array of course data (see json in folder courses/)
  *  user_state  reload of user data for active user
  */
-app.post("/load-new-round", (req, res) => {
+app.post("/test/load-new-round", (req, res) => {
   const data = req.body;
 
   let c_arr = []
@@ -173,7 +186,7 @@ app.post("/load-new-round", (req, res) => {
  *  round : ID for the new round
  * 
  */
-app.post("/create-new-round", (req, res) => {
+app.post("/test/create-new-round", (req, res) => {
   const data = req.body;
 
   console.log("create new round");
@@ -207,7 +220,7 @@ app.post("/create-new-round", (req, res) => {
  *  round : ID for the new round
  * 
  */
-app.post("/load-round-status", (req, res) => {
+app.post("/test/load-round-status", (req, res) => {
   const data = req.body;
 
   console.log("load round status for " + data.round);
@@ -224,7 +237,7 @@ app.post("/load-round-status", (req, res) => {
  *  courses   array of course data (see json in folder courses/)
  *  cs_state  stored course edit state
  */
-app.post("/load-ce", (req, res) => {
+app.post("/test/load-ce", (req, res) => {
   const data = req.body;
 
   let c_arr = []
@@ -248,7 +261,7 @@ app.post("/load-ce", (req, res) => {
  * Res data:
  *  cs_state  stored course edit state
  */
-app.post("/start-ce", (req, res) => {
+app.post("/test/start-ce", (req, res) => {
   const data = req.body;
 
   var key = "";
@@ -283,7 +296,7 @@ app.post("/start-ce", (req, res) => {
  *  courses   array of course data (see json in folder courses/)
  *  cs_state  stored course edit state
  */
-app.post("/log-ce-pos", (req, res) => {
+app.post("/test/log-ce-pos", (req, res) => {
   const data = req.body;
 
   console.log(data.pos);

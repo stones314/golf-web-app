@@ -37,5 +37,5 @@ export const images = {
 //Color of range indicator is #f9e7a2
 
 //export const SERVER = "http://localhost:3018";
-export const SERVER = process.env.REACT_APP_SERVER_ADDR;
-
+//export const SERVER = process.env.REACT_APP_SERVER_ADDR;
+export const SERVER = "/test";
