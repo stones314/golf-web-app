@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { SERVER } from "./helper/Consts";
+import { SERVER, getDistKM } from "./helper/Consts";
 import StringInput from "./helper/StringInput";
 import Cookies from "universal-cookie";
 import UserMain from "./UserMain";
@@ -22,6 +22,7 @@ function LogIn() {
     lat: 0,
     long: 0,
     acc: 0,
+    dist : 0
   });
   const [err, setErr] = useState("");
 
@@ -166,7 +167,11 @@ function LogIn() {
       lat: pos.coords.latitude,
       long: pos.coords.longitude,
       acc: pos.coords.accuracy,
+      dist: 0
     }
+
+    my_pos.dist = getDistKM(pos.lat, pos.long, my_pos.lat, my_pos.long);
+
     setPos(my_pos);
     setErr("");
     setPageState(ENTER_CREDENTIALS);
