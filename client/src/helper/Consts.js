@@ -51,6 +51,11 @@ export function getDistM(lat1, lon1, lat2, lon2) {
       ; 
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
     var d = R * c * 1000; // Distance in m
+    console.log("lat1 " + lat1.toFixed(4) + ", lon1 " + lon1.toFixed(4));
+    console.log("lat2 " + lat2.toFixed(4) + ", lon2 " + lon2.toFixed(4));
+    console.log("dLat " + dLat.toFixed(4) + ", dLon " + dLon.toFixed(4));
+    console.log("a " + a.toFixed(4) + ", c " + c.toFixed(4));
+    console.log("d " + d.toFixed(4));
     return d;
   }
   

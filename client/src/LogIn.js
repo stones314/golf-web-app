@@ -162,11 +162,11 @@ function LogIn() {
     }
   }
 
-  function onPosFetched(pos) {
+  function onPosFetched(p) {
     const my_pos = {
-      lat: pos.coords.latitude,
-      long: pos.coords.longitude,
-      acc: pos.coords.accuracy,
+      lat: p.coords.latitude,
+      long: p.coords.longitude,
+      acc: p.coords.accuracy,
       dist: 0
     }
     if(pos.lat !== 0)
