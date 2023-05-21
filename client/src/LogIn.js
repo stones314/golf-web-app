@@ -3,11 +3,13 @@ import { SERVER, getDistM } from "./helper/Consts";
 import StringInput from "./helper/StringInput";
 import Cookies from "universal-cookie";
 import UserMain from "./UserMain";
+import StartMatch from "./match/StartMatch";
 import './App.css';
 
 const LOADING = 0
 const ENTER_CREDENTIALS = 1;
 const LOGGED_IN = 2;
+const MATCH = 3;
 
 function LogIn() {
   const cookies = new Cookies();
@@ -27,10 +29,14 @@ function LogIn() {
   const [err, setErr] = useState("");
 
   useEffect(() => {
-    //    if (name !== "" && pwd !== "")
-    //      onClickLogin();
-    //    else
-    setPageState(ENTER_CREDENTIALS);
+    var old_session = cookies.get("golf_Type") ? cookies.get("golf_Type") : "";
+    var session = LOGGED_IN;
+    if (old_session === "match") session = MATCH;
+    
+    if (name !== "" && pwd !== "")
+      onClickLogin(session);
+    else
+      setPageState(ENTER_CREDENTIALS);
   }, []);
 
   function onNameChange(newValue) {
@@ -42,7 +48,7 @@ function LogIn() {
     setPwd(newValue);
   }
 
-  function onClickLogin() {
+  function onClickLogin(to_state) {
     if (name === "") {
       setNerr("Skriv inn navn");
       setPerr("");
@@ -57,32 +63,36 @@ function LogIn() {
       headers: { 'Content-Type': 'application/json' }
     })
       .then((res) => res.json())
-      .then((data) => onResponse(data));
+      .then((data) => onResponse(data, to_state));
   }
 
   function onClickLogout() {
     cookies.set("golf_User", "", { path: "/" });
     cookies.set("golf_Pwd", "", { path: "/" });
+    cookies.set("golf_Type", "", { path: "/" });
     setName("");
     setPwd("");
     setUserData(null);
     setPageState(ENTER_CREDENTIALS);
   }
 
-  function onResponse(data) {
+  function onResponse(data, to_state) {
     if (data.ok === 0) {
+      const session = to_state === MATCH ? "match" : "stats";
       cookies.set("golf_User", name, { path: "/" });
       cookies.set("golf_Pwd", pwd, { path: "/" });
+      cookies.set("golf_Type", session, { path: "/" });
       setNerr("");
       setPerr("");
       setUserData(data.user);
-      setPageState(LOGGED_IN);
+      setPageState(to_state);
       return;
     }
 
     if (pageState === LOADING) {
       cookies.set("golf_User", "", { path: "/" });
       cookies.set("golf_Pwd", "", { path: "/" });
+      cookies.set("golf_Type", "", { path: "/" });
       setPageState(ENTER_CREDENTIALS);
       return;
     }
@@ -109,7 +119,7 @@ function LogIn() {
             editVal={name}
             errorMsg={nErr}
             onChange={(newValue) => onNameChange(newValue)}
-            onEnterDown={(e) => { e.preventDefault(); onClickLogin() }}
+            onEnterDown={(e) => { e.preventDefault(); onClickLogin(LOGGED_IN) }}
           />
           <StringInput
             type="password"
@@ -117,12 +127,17 @@ function LogIn() {
             editVal={pwd.toString()}
             errorMsg={pErr}
             onChange={(newValue) => onPwdChange(newValue)}
-            onEnterDown={(e) => { e.preventDefault(); onClickLogin() }}
+            onEnterDown={(e) => { e.preventDefault(); onClickLogin(LOGGED_IN) }}
           />
         </div>
         <div className="row mtb2">
-          <div className="trans-mid cp brd" onClick={onClickLogin}>
+          <div className="trans-mid cp brd" onClick={() => onClickLogin(LOGGED_IN)}>
             Logg På
+          </div>
+        </div>
+        <div className="row mtb2">
+          <div className="trans-mid cp brd" onClick={() => onClickLogin(MATCH)}>
+            Spill Match
           </div>
         </div>
         <div className="row mtb2">
@@ -204,6 +219,21 @@ function LogIn() {
   if (pageState === ENTER_CREDENTIALS) {
     return (
       renderLogIn()
+    )
+  }
+
+  if (pageState === MATCH) {
+    return (
+      <div className="narrow col center trans-mid">
+      <div className="narrow row center">
+        <div>Logget inn som <b>{name}</b></div>
+        <div className="cp brd mlr3" onClick={onClickLogout}>Logg ut</div>
+      </div>
+      <StartMatch
+        user={userData}
+        />
+
+    </div>
     )
   }
 

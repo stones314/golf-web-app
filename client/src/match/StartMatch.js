@@ -1,15 +1,14 @@
 import { useState, useEffect } from "react";
-import { SERVER } from "./helper/Consts";
-import PlayGolf from "./PlayingGolf";
-import './App.css';
+import { SERVER } from "./../helper/Consts";
+import PlayMatch from "./PlayMatch";
+import './../App.css';
 
 const LOADING = 0
 const SHOW_MENU = 1
 const ADD_OTHERS = 2
 const PLAY_GOLF = 3
 
-function StartRound(props) {
-    //    const cookies = new Cookies();
+function StartMatch(props) {
 
     const [pageState, setPageState] = useState(LOADING);
     const [playerOpts, setPlayerOpts] = useState([]);
@@ -19,12 +18,33 @@ function StartRound(props) {
     const [teeSel, setTeeSel] = useState(0);
     const [holeSel, setHoleSel] = useState(1);
     const [round, setRound] = useState(-1);
+    const [match, setMatch] = useState({hole: 0});
 
     useEffect(() => {
-        loadData();
+        loadMatchData();
     }, []);
 
-    function loadData() {
+    function loadMatchData() {
+        fetch(SERVER + "/load-match", {
+            method: 'POST',
+            body: JSON.stringify({
+                test: true
+            }),
+            headers: { 'Content-Type': 'application/json' }
+        })
+            .then((res) => res.json())
+            .then((data) => onMatchDataLoaded(data));
+    }
+
+    function onMatchDataLoaded(data) {
+        setMatch(data.match_state);
+        if(data.match_state.hole < 1)
+            loadPlayerCourseData();
+        else
+            setPageState(PLAY_GOLF);
+    }
+
+    function loadPlayerCourseData() {
         fetch(SERVER + "/load-course-players", {
             method: 'POST',
             body: JSON.stringify({
@@ -37,29 +57,35 @@ function StartRound(props) {
     }
 
     function onDataLoaded(data) {
-        if(data.user_state.in_round < 0){
-            setPlayerOpts(data.users);
-            setCourseOpts(data.courses);
-            setPageState(SHOW_MENU);
-            return;
-        }
+        setPlayerOpts(data.users);
+        setCourseOpts(data.courses);
 
-        setRound(data.user_state.in_round);
-        setPageState(PLAY_GOLF);
+        if(match.hole < 1){
+            setPageState(SHOW_MENU);
+        }
+        else{
+            setPageState(PLAY_GOLF);
+        }
     }
 
     function createNewRound() {
-        var unames = [props.user.name]
+        var players = [{
+            name: props.user.name,
+            hcp: 0 //TODO
+        }]
         playerSel.forEach(id => {
-            unames.push(playerOpts[id].name);
+            players.push({
+                name: playerOpts[id].name,
+                hcp: 0 //TODO
+            });
         })
-        fetch(SERVER + "/create-new-round", {
+        fetch(SERVER + "/start-match", {
             method: 'POST',
             body: JSON.stringify({
-                users: unames,
+                players: players,
                 course: courseOpts[courseSel].name,
-                tee: teeSel,
-                hole: holeSel
+                tee_id: teeSel,
+                length: 18,
             }),
             headers: { 'Content-Type': 'application/json' }
         })
@@ -68,7 +94,7 @@ function StartRound(props) {
     }
 
     function onRoundCreated(data) {
-        setRound(data.round);
+        setRound(data.match_state);
         setPageState(PLAY_GOLF);
     }
 
@@ -216,9 +242,8 @@ function StartRound(props) {
     if (pageState === PLAY_GOLF) {
         return (
             <div className="">
-                <PlayGolf
-                    round={round}
-                    user={props.user}
+                <PlayMatch
+                    onFinish={onClickShowMenu}
                 />
             </div>
         )
@@ -226,6 +251,7 @@ function StartRound(props) {
 
     return (
         <div className="">
+            <h3>Spill Match!</h3>
             {renderCourseOpts()}
             {renderTeeOpts()}
             {renderHoleOpts()}
@@ -236,4 +262,4 @@ function StartRound(props) {
     );
 }
 
-export default StartRound;
+export default StartMatch;
