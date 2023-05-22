@@ -56,13 +56,13 @@ function PlayMatch(props) {
     function renderEditShot(i) {
         if (match.hole > 18) {
             return (
-                <div className='row f6'>
+                <div className='row mtb2 f6'>
 
                 </div>
             )
         }
         return (
-            <div className='row f5'>
+            <div className='row mtb2 f5'>
                 <div className='f1 cp' onClick={() => onShotMinus(i)}>
                     <img className="icon" src={IMG["minus"]} alt="minus" />
                 </div>
