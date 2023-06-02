@@ -19,6 +19,7 @@ function LogIn() {
   const [pwd, setPwd] = useState(cookies.get("golf_Pwd") ? cookies.get("golf_Pwd") : "");
   const [nErr, setNerr] = useState("");
   const [pErr, setPerr] = useState("");
+  const [test, setTest] = useState("");
   const [userData, setUserData] = useState(null);
   const [pos, setPos] = useState({
     lat: 0,
@@ -146,6 +147,7 @@ function LogIn() {
           </div>
         </div>
         {renderLastPos()}
+        {renderTest()}
       </div>
     )
   }
@@ -203,6 +205,40 @@ function LogIn() {
     return (
       <div className="mtb2">
         Pos: <br />{pos.lat.toFixed(2)}/{pos.long.toFixed(2)} +/- {pos.acc.toFixed(2)}m, dist from last: {pos.dist.toFixed(2)}m
+      </div>
+    )
+  }
+
+
+  function onClickTest() {
+    setPageState(LOADING);
+    fetch("/rsh/store-data", {
+      method: 'POST',
+      body: JSON.stringify({
+        id: "test",
+        pwd: "TEST",
+        data: 1234
+      }),
+      headers: { 'Content-Type': 'application/json' }
+    })
+      .then((res) => res.json())
+      .then((data) => onTestRes(data));
+  }
+
+  function onTestRes(data) {
+    setTest(data.ok.toString());
+    setPageState(ENTER_CREDENTIALS);
+  }
+
+  function renderTest() {
+    return (
+      <div className="mtb2">
+        <div className="row mtb2">
+          <div className="trans-mid cp brd" onClick={onClickTest}>
+            Test
+          </div>
+        </div>
+        {test}
       </div>
     )
   }
