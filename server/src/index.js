@@ -350,6 +350,7 @@ app.post("/test/load-match", (req, res) => {
  *        used  how many shots the player used (-1 => not yet played this hole, -2 conceded hole)
  *        given how many shots player was given on hole
  *        won   0 => player did not have best score, 1 => this player had best score
+ *        points how many points player scored on this hole
  */
 app.post("/test/start-match", (req, res) => {
   const data = req.body;
@@ -394,7 +395,8 @@ app.post("/test/start-match", (req, res) => {
       shots.push({
         used: -1,
         given: calc_shots_given_hole(player.shots_given, course.holes[i].index),
-        won: 0
+        won: 0,
+        points: 0
       });
     });
     match_state.score_card.push({
@@ -433,6 +435,9 @@ app.post("/test/log-match-hole", (req, res) => {
     for (const [i, ] of match_state.players.entries()) {
       match_state.score_card[data.hole-1].shots[i].used = data.shots[i];
       var s = data.shots[i] - match_state.score_card[data.hole-1].shots[i].given;
+      var p = match_state.score_card[data.hole-1].par - s + 2;
+      if (p < 0) p = 0;
+      match_state.score_card[data.hole-1].shots[i].points = p;
       if (s < minst) minst = s;
     }
     let n_min = 0;
