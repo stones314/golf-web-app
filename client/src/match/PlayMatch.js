@@ -184,18 +184,36 @@ function PlayMatch(props) {
             .then((data) => props.onFinish());
     }
 
+    function renderPoints(points) {
+        if (points === 0) {
+            return (<div className="small-txt f1"></div>)
+        }
+        return (
+            <div className="small-txt f1">{points}p</div>
+        )
+    }
+
+    function renderShotsUsed(used, given, won, points) {
+        return (
+            <div className={"row center f2"}>
+                <div className="f1"></div>
+                <div className="small-txt f1">{given}</div>
+                <div className={"f1" + won}>{used}</div>
+                {renderPoints(points)}
+                <div className="f1"></div>
+            </div>
+        )
+    }
+
     function renderHoleStatus(hole_data, hole_no) {
         var sel = match.hole === hole_no ? " brd" : "";
         var given = [];
         var used = [];
         for (const [i, p] of hole_data.shots.entries()) {
-            given.push(
-                <div className="f1" key={i}>{p.given}</div>
-            )
             const won = p.won === 1 ? " sel" : "";
-            const u = hole_no < match.hole ? p.used.toString() : "-";
+            const u_txt = p.used > 0 ? p.used.toString() : "-";
             used.push(
-                <div className={"f1" + won} key={i}>{u}</div>
+                renderShotsUsed(u_txt, p.given, won, p.points)
             )
         }
 
@@ -207,8 +225,23 @@ function PlayMatch(props) {
                 <div className="f1">{hole_data.hole}</div>
                 <div className="f1">{hole_data.par}</div>
                 <div className="f1">{hole_data.hcp}</div>
-                {given}
                 {used}
+            </div>
+        )
+    }
+
+    function renderShotSummary(shot_sum, given_sum, points_sum, id) {
+        var name = "Total";
+        if (id === 19) name = "Front";
+        else if (id === 20) name = "Back";
+        return (
+            <div
+                key={id} className={"row f1"}>
+                <div className="f1">{name}</div>
+                <div className="f1">{shot_sum.par}</div>
+                <div className="f1"></div>
+                {renderShotsUsed(shot_sum.sn, given_sum.sn, "", points_sum.sn)}
+                {renderShotsUsed(shot_sum.shø, given_sum.shø, "", points_sum.shø)}
             </div>
         )
     }
@@ -229,7 +262,7 @@ function PlayMatch(props) {
     *      par     par for hole
     *      hcp     hcp index for hole
     *      shots   array of shot data for each player
-    *        used  how many shots the player used (-1 => not yet played this hole, -2 conceded hole)
+    *        used  how many shots the player used (-1 => not yet played this hole)
     *        given how many shots player was given on hole
     *        won   0 => player did not have best score, 1 => this player had best score
     */
@@ -256,39 +289,42 @@ function PlayMatch(props) {
                 <div className="f1">Hull</div>
                 <div className="f1">Par</div>
                 <div className="f1">Hcp</div>
-                <div className="f1">SN gitt</div>
-                <div className="f1">SHØ gitt</div>
-                <div className="f1">SN slag</div>
-                <div className="f1">SHØ slag</div>
+                <div className="f2">SN</div>
+                <div className="f2">SHØ</div>
             </div>
         )
-        var sum = [0, 0, 0];
+        //Sum: three arrays, first nine, last nine and all 18
+        //     each array has three numbers, index 0 = SN, 1 = SHØ, 2 = course par
+        //var sum = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
+        var shot_sum = { front: { sn: 0, shø: 0, par: 0 }, back: { sn: 0, shø: 0, par: 0 }, total: { sn: 0, shø: 0, par: 0 } };
+        var given_sum = { front: { sn: 0, shø: 0 }, back: { sn: 0, shø: 0 }, total: { sn: 0, shø: 0, par: 0 } };
+        var point_sum = { front: { sn: 0, shø: 0 }, back: { sn: 0, shø: 0 }, total: { sn: 0, shø: 0, par: 0 } };
         for (const [i, s] of match.score_card.entries()) {
             scores.push(
                 renderHoleStatus(s, i + 1)
             )
-            sum[2] += s.par;
+            const fb = s.hole < 10 ? "front" : "back";
+            shot_sum[fb].par += s.par;
             for (const [i, p] of match.players.entries()) {
+                const p_name = i === 0 ? "sn" : "shø";
                 if (s.shots[i].used > 0)
-                    sum[i] += s.shots[i].used;
+                    shot_sum[fb][p_name] += s.shots[i].used;
+                given_sum[fb][p_name] += s.shots[i].given;
+                point_sum[fb][p_name] += s.shots[i].points;
             }
+            if (s.hole === 9)
+                scores.push(renderShotSummary(shot_sum.front, given_sum.front, point_sum.front, 19))
         }
-        scores.push(
-            <div
-                key={19}
-                className={"row f1"}
-            >
-                <div className="f1"></div>
-                <div className="f1">{sum[2]}</div>
-                <div className="f1"></div>
-                <div className="f1"></div>
-                <div className="f1"></div>
-                <div className="f1">{sum[0]}</div>
-                <div className="f1">{sum[1]}</div>
-            </div>
-        )
+        scores.push(renderShotSummary(shot_sum.back, given_sum.back, point_sum.back, 20))
+
+        for (const [i, id] of ["sn", "shø", "par"].entries()) {
+            shot_sum.total[id] = shot_sum.front[id] + shot_sum.back[id];
+            given_sum.total[id] = given_sum.front[id] + given_sum.back[id];
+            point_sum.total[id] = point_sum.front[id] + point_sum.back[id];
+        }
+        scores.push(renderShotSummary(shot_sum.total, given_sum.total, point_sum.total, 21))
         return (
-            <div className="mtb2">
+            <div className="narrow mtb2">
                 <div className="mtb2">
                     {match.course}
                 </div>

@@ -48,7 +48,7 @@
 
 .narrow {
   position: relative;
-  width: min(100vmin, 500px);
+  width: min(100vmin, 300px);
 }
 
 .wide {
@@ -197,6 +197,10 @@ form {
 
 .big-txt {
   font-size: x-large;
+}
+
+.small-txt {
+  font-size:xx-small;
 }
 
 .fix-center {
