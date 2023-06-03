@@ -113,7 +113,7 @@ function StartMatch(props) {
             c_btns.push(
                 <div
                     key={i}
-                    className={"f1 brd cp" + sel}
+                    className={"mtb2 f1 brd cp" + sel}
                     onClick={() => {
                         if (courseSel === i) return;
                         setCourseSel(i);
@@ -192,7 +192,6 @@ function StartMatch(props) {
         var p_btns = [];
         for (const [i, p] of playerOpts.entries()) {
             const sel = playerSel.includes(i) ? " sel" : "";
-            const in_game = p.in_round < 0 ? "ledig" : "optatt";
             p_btns.push(
                 <div
                     key={i}
@@ -203,7 +202,7 @@ function StartMatch(props) {
                         else nps.push(i);
                         setPlayerSel(nps);
                     }}>
-                    {p.name} <br /> {in_game}
+                    {p.name}
                 </div>
             )
         }
