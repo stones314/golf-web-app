@@ -1,0 +1,116 @@
+{
+    "name":"Eiker",
+    "tees":["Gul", "Rød"],
+    "slope":[121, 116],
+    "verdi":[67.1, 64.5],
+    "holes":[
+        {
+            "no": 1,
+            "par": 5,
+            "length" : [413, 383],
+            "index" : 3
+        },
+        {
+            "no": 2,
+            "par": 3,
+            "length" : [161, 137],
+            "index" : 9
+        },
+        {
+            "no": 3,
+            "par": 4,
+            "length" : [284, 284],
+            "index" : 7
+        },
+        {
+            "no": 4,
+            "par": 3,
+            "length" : [92, 79],
+            "index" : 17
+        },
+        {
+            "no": 5,
+            "par": 4,
+            "length" : [343, 326],
+            "index" : 1
+        },
+        {
+            "no": 6,
+            "par": 4,
+            "length" : [261, 237],
+            "index" : 15
+        },
+        {
+            "no": 7,
+            "par": 4,
+            "length" : [340, 314],
+            "index" : 5
+        },
+        {
+            "no": 8,
+            "par": 4,
+            "length" : [334, 299],
+            "index" : 11
+        },
+        {
+            "no": 9,
+            "par": 3,
+            "length" : [157, 135],
+            "index" : 13
+        },
+        {
+            "no": 10,
+            "par": 5,
+            "length" : [413, 383],
+            "index" : 4
+        },
+        {
+            "no": 11,
+            "par": 3,
+            "length" : [161, 137],
+            "index" : 10
+        },
+        {
+            "no": 12,
+            "par": 4,
+            "length" : [284, 284],
+            "index" : 8
+        },
+        {
+            "no": 13,
+            "par": 3,
+            "length" : [92, 79],
+            "index" : 18
+        },
+        {
+            "no": 14,
+            "par": 4,
+            "length" : [343, 326],
+            "index" : 2
+        },
+        {
+            "no": 15,
+            "par": 4,
+            "length" : [261, 237],
+            "index" : 16
+        },
+        {
+            "no": 16,
+            "par": 4,
+            "length" : [340, 314],
+            "index" : 6
+        },
+        {
+            "no": 17,
+            "par": 4,
+            "length" : [334, 299],
+            "index" : 12
+        },
+        {
+            "no": 18,
+            "par": 3,
+            "length" : [157, 135],
+            "index" : 14
+        }
+    ]
+}
