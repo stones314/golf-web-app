@@ -113,7 +113,7 @@ function StartMatch(props) {
             c_btns.push(
                 <div
                     key={i}
-                    className={"mtb2 f1 brd cp" + sel}
+                    className={"mlr3 f1 brd cp" + sel}
                     onClick={() => {
                         if (courseSel === i) return;
                         setCourseSel(i);
