@@ -36,9 +36,9 @@ export const IMG = {
 
 //Color of range indicator is #f9e7a2
 
-//export const SERVER = "http://localhost:3018/test";
+export const SERVER = "http://localhost:3018/test";
 //export const SERVER = process.env.REACT_APP_SERVER_ADDR;
-export const SERVER = "/test";
+//export const SERVER = "/test";
 
 export function getDistM(lat1, lon1, lat2, lon2) {
     const R = 6362.15; // Radius of the earth in km at 60 degrees north
