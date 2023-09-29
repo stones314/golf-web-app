@@ -4,6 +4,7 @@ import StringInput from "./helper/StringInput";
 import Cookies from "universal-cookie";
 import UserMain from "./UserMain";
 import StartMatch from "./match/StartMatch";
+import StartSim from "./simulator/StartSim";
 import './App.css';
 
 const LOADING = 0
@@ -265,7 +266,7 @@ function LogIn() {
         <div>Logget inn som <b>{name}</b></div>
         <div className="cp brd mlr3" onClick={onClickLogout}>Logg ut</div>
       </div>
-      <StartMatch
+      <StartSim
         user={userData}
         />
 

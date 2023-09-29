@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import { SERVER } from "./../helper/Consts";
-import PlayMatch from "./PlayMatch";
+import PlaySim from "./PlaySim";
 import './../App.css';
 
 const LOADING = 0
 const SHOW_MENU = 1
-const ADD_OTHERS = 2
-const PLAY_GOLF = 3
+const PLAY_GOLF = 2
 
 function StartSim(props) {
 
@@ -14,7 +13,7 @@ function StartSim(props) {
     const [playerOpts, setPlayerOpts] = useState([]);
     const [playerSel, setPlayerSel] = useState([]);
     const [holeSel, setHoleSel] = useState(1);
-    const [gameState, setGameState] = useState({hole: 0});
+    const [gameState, setGameState] = useState({ score_cards : [] });
 
     useEffect(() => {
         loadSimData()
@@ -33,9 +32,9 @@ function StartSim(props) {
     }
 
     function onSimDataLoaded(data) {
-        setGameState(data.game_state);
-        if(data.gmae_state.hole < 1)
-            loadPlayerCourseData();
+        setGameState(data.sim_state);
+        if (data.sim_state.score_cards.length === 0)
+            loadPlayerData();
         else
             setPageState(PLAY_GOLF);
     }
@@ -55,10 +54,10 @@ function StartSim(props) {
     function onPlayersLoaded(data) {
         setPlayerOpts(data.users);
 
-        if(match.hole < 1){
+        if (gameState.score_cards.length === 0) {
             setPageState(SHOW_MENU);
         }
-        else{
+        else {
             setPageState(PLAY_GOLF);
         }
     }
@@ -87,7 +86,7 @@ function StartSim(props) {
     }
 
     function onRoundCreated(data) {
-        setGameState(data.game_state);
+        setGameState(data.sim_state);
         setPageState(PLAY_GOLF);
     }
 
@@ -97,60 +96,6 @@ function StartSim(props) {
 
     function onClickPlay() {
         createNewRound();
-    }
-
-    function renderTeeOpts() {
-        var t_btns = [];
-        for (const [i, t] of courseOpts[courseSel].tees.entries()) {
-            var dist = 0;
-            courseOpts[courseSel].holes.forEach(hole => {
-                dist += hole.length[i];
-            });
-            const sel = teeSel === i ? " sel" : ""
-            t_btns.push(
-                <div
-                    key={i}
-                    className={"f1 brd mlr3 cp" + sel}
-                    onClick={() => setTeeSel(i)}>
-                    {t} <br /> {dist}
-                </div>
-            )
-        }
-        return (
-            <div className="mtb2">
-                Tee:
-                <div className="row">
-                    {t_btns}
-                </div>
-            </div>
-        )
-    }
-
-    function renderHoleOpts() {
-        if (courseOpts[courseSel].holes.length <= 9) return;
-
-        const h_opts = [1, 9];
-        var h_btns = [];
-
-        for (const [i, h] of h_opts.entries()) {
-            const sel = holeSel === h ? " sel" : ""
-            h_btns.push(
-                <div
-                    key={i}
-                    className={"f1 brd mlr3 cp" + sel}
-                    onClick={() => setHoleSel(h)}>
-                    {h}
-                </div>
-            )
-        }
-        return (
-            <div className="mtb2">
-                Start fra hull:
-                <div className="row">
-                    {h_btns}
-                </div>
-            </div>
-        )
     }
 
     function renderPlayerOpts() {
@@ -189,24 +134,10 @@ function StartSim(props) {
         )
     }
 
-    if (pageState === ADD_OTHERS) {
-        return (
-            <div className="">
-                {renderPlayerOpts()}
-                <div className="mtb2 cp brd" onClick={() => onClickPlay()}>
-                    Start
-                </div>
-                <div className="center cp brd" onClick={() => onClickShowMenu()}>
-                    Tilbake
-                </div>
-            </div>
-        )
-    }
-
     if (pageState === PLAY_GOLF) {
         return (
             <div className="">
-                <PlayMatch
+                <PlaySim
                     onFinish={onClickShowMenu}
                 />
             </div>
@@ -216,10 +147,12 @@ function StartSim(props) {
     return (
         <div className="">
             <h3>Simulator!</h3>
-            {renderTeeOpts()}
-            {renderHoleOpts()}
-            <div className="mtb2 cp brd" onClick={() => setPageState(ADD_OTHERS)}>
-                Neste
+            {renderPlayerOpts()}
+            <div className="mtb2 cp brd" onClick={() => onClickPlay()}>
+                Start
+            </div>
+            <div className="center cp brd" onClick={() => onClickShowMenu()}>
+                Tilbake
             </div>
         </div>
     );
