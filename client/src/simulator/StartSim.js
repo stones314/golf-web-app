@@ -191,9 +191,6 @@ function StartSim(props) {
                 <div className="mtb2 cp brd wfit" onClick={() => onClickPlay()}>
                     Start
                 </div>
-                <div className="center cp brd wfit" onClick={() => props.onExit()}>
-                    Logg ut
-                </div>
             </div>
         </div>
     );
