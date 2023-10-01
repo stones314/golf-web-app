@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { SERVER } from "./../helper/Consts";
+import { SERVER, IMG } from "./../helper/Consts";
 import PlaySim from "./PlaySim";
 import './../App.css';
+import StringInput from "../helper/StringInput";
 
 const LOADING = 0
 const SHOW_MENU = 1
@@ -10,10 +11,9 @@ const PLAY_GOLF = 2
 function StartSim(props) {
 
     const [pageState, setPageState] = useState(LOADING);
-    const [playerOpts, setPlayerOpts] = useState([]);
     const [playerSel, setPlayerSel] = useState([]);
-    const [holeSel, setHoleSel] = useState(1);
-    const [gameState, setGameState] = useState({ score_cards : [] });
+    const [nameAdd, setNameAdd] = useState("");
+    const [naErr, setNAerr] = useState("");
 
     useEffect(() => {
         loadSimData()
@@ -32,34 +32,10 @@ function StartSim(props) {
     }
 
     function onSimDataLoaded(data) {
-        setGameState(data.sim_state);
         if (data.sim_state.score_cards.length === 0)
-            loadPlayerData();
+            setPageState(SHOW_MENU);
         else
             setPageState(PLAY_GOLF);
-    }
-
-    function loadPlayerData() {
-        fetch(SERVER + "/load-players", {
-            method: 'POST',
-            body: JSON.stringify({
-                user: props.user.name
-            }),
-            headers: { 'Content-Type': 'application/json' }
-        })
-            .then((res) => res.json())
-            .then((data) => onPlayersLoaded(data));
-    }
-
-    function onPlayersLoaded(data) {
-        setPlayerOpts(data.users);
-
-        if (gameState.score_cards.length === 0) {
-            setPageState(SHOW_MENU);
-        }
-        else {
-            setPageState(PLAY_GOLF);
-        }
     }
 
     function createNewRound() {
@@ -67,9 +43,9 @@ function StartSim(props) {
             name: props.user.name,
             hcp: 0 //TODO
         }]
-        playerSel.forEach(id => {
+        playerSel.forEach(name => {
             players.push({
-                name: playerOpts[id].name,
+                name: name,
                 hcp: 0 //TODO
             });
         })
@@ -86,7 +62,6 @@ function StartSim(props) {
     }
 
     function onRoundCreated(data) {
-        setGameState(data.sim_state);
         setPageState(PLAY_GOLF);
     }
 
@@ -98,30 +73,68 @@ function StartSim(props) {
         createNewRound();
     }
 
-    function renderPlayerOpts() {
-        var p_btns = [];
-        for (const [i, p] of playerOpts.entries()) {
-            const sel = playerSel.includes(i) ? " sel" : "";
-            p_btns.push(
-                <div
-                    key={i}
-                    className={"f1 brd cp" + sel}
-                    onClick={() => {
-                        var nps = playerSel.concat();
-                        if (sel === " sel") nps.splice(nps.indexOf(i), 1);
-                        else nps.push(i);
-                        setPlayerSel(nps);
-                    }}>
-                    {p.name}
+    function onNameChange(newValue) {
+        if (newValue.length > 10) return;
+        setNameAdd(newValue);
+    }
+    function onAddPlayer() {
+        if (nameAdd === "") return;
+        if (playerSel.includes(nameAdd)) {
+            setNAerr("Navnet er i bruk");
+            return;
+        }
+        var nps = playerSel.concat();
+        nps.push(nameAdd);
+        setPlayerSel(nps);
+        setNameAdd("");
+        setNAerr("");
+    }
+    function onRemovePlayer(index) {
+        var nps = playerSel.concat();
+        nps.splice(index, 1);
+        setPlayerSel(nps);
+    }
+    function renderAddPlayer() {
+        return (
+            <div className="row">
+                <StringInput
+                    description={""}
+                    type="text"
+                    editVal={nameAdd}
+                    errorMsg={naErr}
+                    onChange={(newValue) => onNameChange(newValue)}
+                    onEnterDown={(e) => { e.preventDefault(); onAddPlayer() }}
+                />
+                <div className="cp" onClick={() => onAddPlayer()}>
+                    <img className="icon" src={IMG["pluss"]} alt="pluss" />
+                </div>
+            </div>
+        )
+    }
+
+    function renderPlayerNames() {
+        var players = [];
+        players.push(
+            <div key={-1} className="row">
+                <div>{props.user.name}</div>
+                <div className='f1'>
+                </div>
+            </div>
+        )
+        for (const [i, p] of playerSel.entries()) {
+            players.push(
+                <div key={i} className="row">
+                    <div>{p}</div>
+                    <div className='f1 cp' onClick={() => onRemovePlayer(i)}>
+                        <img className="icon" src={IMG["minus"]} alt="minus" />
+                    </div>
                 </div>
             )
         }
         return (
-            <div className="mtb2">
-                Inviter andre:
-                <div className="">
-                    {p_btns}
-                </div>
+            <div>
+                <div>Spillere:</div>
+                <div>{players}</div>
             </div>
         )
     }
@@ -138,7 +151,7 @@ function StartSim(props) {
         return (
             <div className="">
                 <PlaySim
-                    onFinish={onClickShowMenu}
+                    onFinish={() => onClickShowMenu()}
                 />
             </div>
         )
@@ -147,12 +160,13 @@ function StartSim(props) {
     return (
         <div className="">
             <h3>Simulator!</h3>
-            {renderPlayerOpts()}
+            {renderPlayerNames()}
+            {renderAddPlayer()}
             <div className="mtb2 cp brd" onClick={() => onClickPlay()}>
                 Start
             </div>
-            <div className="center cp brd" onClick={() => onClickShowMenu()}>
-                Tilbake
+            <div className="center cp brd" onClick={() => props.onExit()}>
+                Logg ut
             </div>
         </div>
     );

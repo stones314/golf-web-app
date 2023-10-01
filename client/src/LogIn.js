@@ -139,7 +139,7 @@ function LogIn() {
         </div>
         <div className="row mtb2">
           <div className="trans-mid cp brd" onClick={() => onClickLogin(MATCH)}>
-            Spill Match
+            Spill Simulator
           </div>
         </div>
         <div className="row mtb2">
@@ -268,7 +268,8 @@ function LogIn() {
       </div>
       <StartSim
         user={userData}
-        />
+        onExit={() => setPageState(ENTER_CREDENTIALS)}
+      />
 
     </div>
     )

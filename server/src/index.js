@@ -560,9 +560,16 @@ class ScoreCard {
       this.holes.push(new Hole())
     }
   }
+
+  hasCompletedHole(hole){
+    if (hole <= 0) return false;
+    if (hole >= this.holes.length) return false;
+    return true;
+  }
 }
 
 var sim_state = {
+  hole : 0,
   score_cards: [],
 }
 
@@ -581,7 +588,8 @@ app.post("/test/load-sim", (req, res) => {
  */
 app.post("/test/end-sim", (req, res) => {
   console.log("end-sim:");
-  sim_state.score_cards = []
+  sim_state.score_cards = [];
+  sim_state.hole = 0;
   res.json({
     ok: true
   });
@@ -603,6 +611,7 @@ app.post("/test/start-sim", (req, res) => {
     sim_state.score_cards.push(new ScoreCard(p.name));
   }
   console.log("start-sim: players = " + p_names);
+  sim_state.hole = 1;
   res.json({
     sim_state: sim_state
   });
@@ -619,11 +628,18 @@ app.post("/test/start-sim", (req, res) => {
 app.post("/test/add-sim-shot", (req, res) => {
   const data = req.body;
   console.log("add-sim-shot: " + data.player + " to " + data.shot_data.land_at);
+  var players_in_hole = 0;
   for(const [i,s] of sim_state.score_cards.entries()){
     if (s.player === data.player){
       s.addShot(data.shot_data)
     }
+    if(s.hasCompletedHole(sim_state.hole)) players_in_hole++;
   }
+
+  if(players_in_hole === sim_state.score_cards.length){
+    sim_state.hole++;
+  }
+
   res.json({
     sim_state: sim_state
   });
