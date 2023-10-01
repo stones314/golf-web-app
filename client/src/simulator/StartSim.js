@@ -112,12 +112,13 @@ function StartSim(props) {
                 </div>
             )
         }
+        const N = playerSel.length + 2;
         return (
             <div className="row">
                 <div className='f1'></div>
                 <div className="f6">
                     <div className="row">
-                        {"3. "}
+                        {N + ". "}
                         <StringInput
                             description={""}
                             type="text"
