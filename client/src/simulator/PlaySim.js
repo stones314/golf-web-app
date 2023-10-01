@@ -277,8 +277,10 @@ function PlaySim(props) {
     return (
         <div className="narrow col">
             {renderScoreCard()}
-            <div className="center cp brd mtop1" onClick={() => EndSim()}>
+            <div className="col center">
+            <div className="center cp brd mtop1 wfit" onClick={() => EndSim()}>
                 Avslutt
+            </div>
             </div>
         </div>
     );

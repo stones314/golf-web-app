@@ -114,17 +114,22 @@ function StartSim(props) {
         }
         return (
             <div className="row">
+                <div className='f1'></div>
                 <div className="f6">
-                <StringInput
-                    description={""}
-                    type="text"
-                    editVal={nameAdd}
-                    errorMsg={""}
-                    onChange={(newValue) => onNameChange(newValue)}
-                    onEnterDown={(e) => { e.preventDefault(); onAddPlayer() }}
-                />
+                    <div className="row">
+                        {"3. "}
+                        <StringInput
+                            description={""}
+                            type="text"
+                            editVal={nameAdd}
+                            errorMsg={""}
+                            onChange={(newValue) => onNameChange(newValue)}
+                            onEnterDown={(e) => { e.preventDefault(); onAddPlayer() }}
+                        />
+                    </div>
                 </div>
                 {showAddBtn()}
+                <div className='f1'></div>
             </div>
         )
     }
@@ -133,18 +138,21 @@ function StartSim(props) {
         var players = [];
         players.push(
             <div key={-1} className="row">
-                <div className="f6 txt-left">{props.user.name}</div>
-                <div className='f1'>
-                </div>
+                <div className='f1'></div>
+                <div className="f6 txt-left">{"1. " + props.user.name}</div>
+                <div className='f2'></div>
             </div>
         )
         for (const [i, p] of playerSel.entries()) {
+            const n = i + 2;
             players.push(
                 <div key={i} className="row">
-                    <div className="f6 txt-left">{p}</div>
+                    <div className='f1'></div>
+                    <div className="f6 txt-left">{n + ". " + p}</div>
                     <div className='f1 cp' onClick={() => onRemovePlayer(i)}>
                         <img className="icon" src={IMG["minus"]} alt="minus" />
                     </div>
+                    <div className='f1'></div>
                 </div>
             )
         }
@@ -178,11 +186,13 @@ function StartSim(props) {
             <h3>Spillere</h3>
             {renderPlayerNames()}
             {renderAddPlayer()}
-            <div className="mtb2 cp brd" onClick={() => onClickPlay()}>
-                Start
-            </div>
-            <div className="center cp brd" onClick={() => props.onExit()}>
-                Logg ut
+            <div className="col center">
+                <div className="mtb2 cp brd wfit" onClick={() => onClickPlay()}>
+                    Start
+                </div>
+                <div className="center cp brd wfit" onClick={() => props.onExit()}>
+                    Logg ut
+                </div>
             </div>
         </div>
     );
