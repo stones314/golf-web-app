@@ -73,6 +73,7 @@ function PlaySim(props) {
     }
 
     function renderScoreCard() {
+
         var shot_sum = []
         var header = [];
         const FP = "f2";
@@ -131,11 +132,21 @@ function PlaySim(props) {
 
         var add = [];
         for (const [i, s] of simState.score_cards.entries()) {
-            add.push(
-                <div className={FP + " row brd-left center cp"} key={i} onClick={() => setRegShot(s.player)}>
-                    <img className="icon mtb2" src={IMG["pluss"]} alt="pluss" />
-                </div>
-            );
+            function renderAddBtn() {
+                if (s.holes.length === simState.hole) {
+                    return (
+                        <div className={FP + " brd-left center cp"} onClick={() => setRegShot(s.player)}>
+                            <img className="icon mtb2" src={IMG["pluss"]} alt="pluss" />
+                        </div>
+                    )
+                }
+                return (
+                    <div className={FP  + " brd-left"}>
+
+                    </div>
+                )
+            }
+            add.push(renderAddBtn());
         }
         holes.push(
             <div className="row brd-btm" key={100}>
