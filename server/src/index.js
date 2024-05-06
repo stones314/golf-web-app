@@ -153,6 +153,36 @@ app.post("/test/load-course-players", (req, res) => {
 });
 
 /*
+ * load-players
+ * 
+ * Req data:
+ *  user    user name
+ * 
+ * Res data:
+ *  users       array of {name, state} for each other user
+ *  user_state  reload of user data for active user
+ */
+app.post("/test/load-players", (req, res) => {
+  const data = req.body;
+  console.log("load-players");
+
+  let u_arr = []
+
+  Object.keys(users).forEach(key => {
+    if (users[key].name !== data.user)
+      u_arr.push({
+        name: users[key].name,
+        in_round: users[key].in_round
+      });
+  });
+
+  res.json({
+    users: u_arr,
+    user_state: users[data.user]
+  });
+});
+
+/*
  * create-new-round
  * 
  * Req data:
@@ -187,7 +217,7 @@ app.post("/test/create-new-round", (req, res) => {
 });
 
 /*
- * create-new-round
+ * load-round-status
  * 
  * Req data:
  *  users     user name of players in round
@@ -298,7 +328,6 @@ app.post("/test/log-ce-pos", (req, res) => {
     ce_state: ce_state
   });
 });
-
 
 
 var match_state = {
@@ -484,6 +513,138 @@ app.post("/test/end-match", (req, res) => {
     ok: true
   });
 });
+
+// SIMULATOR STUFF
+const LIE_PENALTY = {
+  "Tee" : 0,
+  "Fairway" : 0,
+  "Rough" : 0.2,
+  "Green" : 0,
+  "Hole" : 0,
+  "Bunker" : 0.5,
+  "Woods" : 0.5,
+  "Rocks" : 0.5,
+  "Hazard" : 1,
+  "OB" : 1,
+}
+
+class Hole {
+  constructor(length) {
+    this.length = length;
+    this.shots = [];
+    this.completed = false;
+    this.points = 0;
+  }
+  addShot(shot_data){
+    this.shots.push(shot_data)
+    this.points += 1 + LIE_PENALTY[shot_data.land_at];
+    if(shot_data.land_at === "Hole"){
+      this.completed = true;
+    }
+    return this.completed;
+  }
+}
+
+class ScoreCard {
+  constructor(player) {
+    this.player = player;
+    this.points = 0;
+    this.holes = [];
+    this.holes.push(new Hole())
+  }
+
+  addShot(shot_data){
+    const hole_out = this.holes[this.holes.length-1].addShot(shot_data)
+    this.points += 1 + LIE_PENALTY[shot_data.land_at];
+    if(hole_out){
+      this.holes.push(new Hole())
+    }
+  }
+
+  hasCompletedHole(hole){
+    if (hole <= 0) return false;
+    if (hole >= this.holes.length) return false;
+    return true;
+  }
+}
+
+var sim_state = {
+  hole : 0,
+  score_cards: [],
+}
+
+/*
+ * load sim
+ */
+app.post("/test/load-sim", (req, res) => {
+  console.log("load-sim: players = " + sim_state.score_cards.length);
+  res.json({
+    sim_state: sim_state
+  });
+});
+
+/*
+ * end sim
+ */
+app.post("/test/end-sim", (req, res) => {
+  console.log("end-sim:");
+  sim_state.score_cards = [];
+  sim_state.hole = 0;
+  res.json({
+    ok: true
+  });
+});
+
+/*
+ * start sim
+ *
+ * Req data:
+ *  players   array with object with
+ *    name    name of player
+ */
+app.post("/test/start-sim", (req, res) => {
+  const data = req.body;
+  var p_names = "";
+  for(const [i,p] of data.players.entries()){
+    if(i > 0) p_names += ", ";
+    p_names += p.name;
+    sim_state.score_cards.push(new ScoreCard(p.name));
+  }
+  console.log("start-sim: players = " + p_names);
+  sim_state.hole = 1;
+  res.json({
+    sim_state: sim_state
+  });
+});
+
+/*
+ * add shot
+ *
+ * Req data:
+ *  player : player name
+ *  shot_data : object with
+ *    land_at    name of where ball landed, see LIE_PENALTY keys
+ */
+app.post("/test/add-sim-shot", (req, res) => {
+  const data = req.body;
+  console.log("add-sim-shot: " + data.player + " to " + data.shot_data.land_at);
+  var players_in_hole = 0;
+  for(const [i,s] of sim_state.score_cards.entries()){
+    if (s.player === data.player){
+      s.addShot(data.shot_data)
+    }
+    if(s.hasCompletedHole(sim_state.hole)) players_in_hole++;
+  }
+
+  if(players_in_hole === sim_state.score_cards.length){
+    sim_state.hole++;
+  }
+
+  res.json({
+    sim_state: sim_state
+  });
+});
+
 
 //
 // LISTEN! removed after using https server above

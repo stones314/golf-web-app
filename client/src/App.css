@@ -118,6 +118,13 @@
   margin-bottom: 1vmin;
 }
 
+.mtop1 {
+  margin-top: 6px;
+}
+
+.wfit {
+  width: 25vmin;
+}
 
 .sel {
   background-color: aquamarine;
@@ -129,6 +136,18 @@
 
 .brd {
   border: 1px solid #000000;
+}
+
+.brd-dsh {
+  border: 1px dashed #000000;
+}
+
+.brd-btm {
+  border-bottom: 1px solid black;
+}
+
+.brd-left {
+  border-left: 1px solid black;
 }
 
 .kat-opt {

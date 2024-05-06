@@ -4,12 +4,14 @@ import StringInput from "./helper/StringInput";
 import Cookies from "universal-cookie";
 import UserMain from "./UserMain";
 import StartMatch from "./match/StartMatch";
+import StartSim from "./simulator/StartSim";
 import './App.css';
 
 const LOADING = 0
 const ENTER_CREDENTIALS = 1;
 const LOGGED_IN = 2;
 const MATCH = 3;
+const SIMULATOR = 4;
 
 function LogIn() {
   const cookies = new Cookies();
@@ -33,6 +35,7 @@ function LogIn() {
     var old_session = cookies.get("golf_Type") ? cookies.get("golf_Type") : "";
     var session = LOGGED_IN;
     if (old_session === "match") session = MATCH;
+    else if (old_session === "sim") session = SIMULATOR;
     
     if (name !== "" && pwd !== "")
       onClickLogin(session);
@@ -79,7 +82,9 @@ function LogIn() {
 
   function onResponse(data, to_state) {
     if (data.ok === 0) {
-      const session = to_state === MATCH ? "match" : "stats";
+      var session = "stats";
+      if(to_state === MATCH) session = "match";
+      else if(to_state === SIMULATOR) session = "sim";
       cookies.set("golf_User", name, { path: "/" });
       cookies.set("golf_Pwd", pwd, { path: "/" });
       cookies.set("golf_Type", session, { path: "/" });
@@ -132,22 +137,15 @@ function LogIn() {
           />
         </div>
         <div className="row mtb2">
-          <div className="trans-mid cp brd" onClick={() => onClickLogin(LOGGED_IN)}>
-            Logg På
-          </div>
-        </div>
-        <div className="row mtb2">
           <div className="trans-mid cp brd" onClick={() => onClickLogin(MATCH)}>
             Spill Match
           </div>
         </div>
         <div className="row mtb2">
-          <div className="trans-mid cp brd" onClick={onClickLogPos}>
-            Pos?
+          <div className="trans-mid cp brd" onClick={() => onClickLogin(SIMULATOR)}>
+            Spill Simulator
           </div>
         </div>
-        {renderLastPos()}
-        {renderTest()}
       </div>
     )
   }
@@ -267,7 +265,24 @@ function LogIn() {
       </div>
       <StartMatch
         user={userData}
-        />
+        onExit={() => setPageState(ENTER_CREDENTIALS)}
+      />
+
+    </div>
+    )
+  }
+
+  if (pageState === SIMULATOR) {
+    return (
+      <div className="narrow col center trans-mid">
+      <div className="narrow row center">
+        <div>Logget inn som <b>{name}</b></div>
+        <div className="cp brd mlr3" onClick={onClickLogout}>Logg ut</div>
+      </div>
+      <StartSim
+        user={userData}
+        onExit={() => setPageState(ENTER_CREDENTIALS)}
+      />
 
     </div>
     )

@@ -135,6 +135,7 @@ function StartMatch(props) {
     }
 
     function renderTeeOpts() {
+        if(courseOpts.length === 0) return null;
         var t_btns = [];
         for (const [i, t] of courseOpts[courseSel].tees.entries()) {
             var dist = 0;
