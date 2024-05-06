@@ -329,7 +329,7 @@ function PlayMatch(props) {
                     {match.course}
                 </div>
                 <div className="mtb2">
-                    Hull {match.hole}
+                    {match.hole == 19 ? "Ferdig" : " Hull " + match.hole}
                 </div>
                 {renderRegisterShorts()}
                 <div className="col">

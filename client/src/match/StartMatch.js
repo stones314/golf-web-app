@@ -88,6 +88,7 @@ function StartMatch(props) {
                 course: courseOpts[courseSel].name,
                 tee_id: teeSel,
                 length: 18,
+                start_at: holeSel
             }),
             headers: { 'Content-Type': 'application/json' }
         })
@@ -167,7 +168,7 @@ function StartMatch(props) {
     function renderHoleOpts() {
         if (courseOpts[courseSel].holes.length <= 9) return;
 
-        const h_opts = [1, 9];
+        const h_opts = [1, 10];
         var h_btns = [];
 
         for (const [i, h] of h_opts.entries()) {

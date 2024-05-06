@@ -387,12 +387,13 @@ app.post("/test/start-match", (req, res) => {
   console.log("start-match");
 
   match_state = {
-    hole: 1,
+    hole: data.start_at,
     course: data.course,
     length: data.length,
     tee_id: data.tee_id,
     players: [],
     score_card: [],
+    played: 0
   }
 
   let c_key = data.course.toLowerCase() + ".json";
@@ -494,7 +495,12 @@ app.post("/test/log-match-hole", (req, res) => {
         match_state.players[i].holes_won++;
       }
     }
+    match_state.played++;
     match_state.hole++;
+    if(match_state.played == 18)
+      match_state.hole = 19
+    else if(match_state.hole > 18 && match_state.played < 18)
+      match_state.hole = 1;
   }
 
   res.json({
