@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
-import { SERVER } from "./../helper/Consts";
+import { SERVER, IMG } from "./../helper/Consts";
 import PlayMatch from "./PlayMatch";
 import './../App.css';
 
 const LOADING = 0
 const SHOW_MENU = 1
 const ADD_OTHERS = 2
-const PLAY_GOLF = 3
+const EDIT_HCP = 3
+const PLAY_GOLF = 4
 
 function StartMatch(props) {
 
@@ -15,6 +16,7 @@ function StartMatch(props) {
     const [playerSel, setPlayerSel] = useState([]);
     const [courseOpts, setCourseOpts] = useState([]);
     const [courseSel, setCourseSel] = useState(0);
+    const [userHcp, setUserHcp] = useState(props.user.hcp);
     const [teeSel, setTeeSel] = useState(0);
     const [holeSel, setHoleSel] = useState(1);
     const [round, setRound] = useState(-1);
@@ -71,12 +73,12 @@ function StartMatch(props) {
     function createNewRound() {
         var players = [{
             name: props.user.name,
-            hcp: 0 //TODO
+            hcp: userHcp
         }]
         playerSel.forEach(id => {
             players.push({
                 name: playerOpts[id].name,
-                hcp: 0 //TODO
+                hcp: playerOpts[id].hcp
             });
         })
         fetch(SERVER + "/start-match", {
@@ -189,6 +191,70 @@ function StartMatch(props) {
         )
     }
 
+    function onHcpPluss(p_id) {
+        if (p_id < 0) {
+            setUserHcp(userHcp+0.1);
+            return;
+        }
+        var po = playerOpts.concat();
+        po[p_id].hcp = Number(po[p_id].hcp) + 0.1;
+        setPlayerOpts(po);
+    }
+
+    function onHcpMinus(p_id) {
+        if (p_id < 0) {
+            if (userHcp <= 0) return;
+            setUserHcp(userHcp-0.1);
+            return;
+        }
+        if (playerOpts[p_id].hcp <= 0.0) return;
+        var po = playerOpts.concat();
+        po[p_id].hcp = Number(po[p_id].hcp) - 0.1;
+        setPlayerOpts(po);
+    }
+
+    function editPlayerHcp(i) {
+        return (
+            <div className='row f1'>
+                <div className='f1 cp' onClick={() => onHcpMinus(i)}>
+                    <img className="icon" src={IMG["minus"]} alt="minus" />
+                </div>
+                <div className='f1 sqr cp'>
+                    {i<0? userHcp.toFixed(1) : playerOpts[i].hcp.toFixed(1)}
+                </div>
+                <div className='f1 cp' onClick={() => onHcpPluss(i)}>
+                    <img className="icon" src={IMG["pluss"]} alt="pluss" />
+                </div>
+            </div>
+        )
+    }
+
+    function renderEditHcp() {
+        var p_btns = [];
+        p_btns.push(
+            <div key={-1} className="row mtb2">
+            <div className="f1"> {props.user.name} </div>
+            { editPlayerHcp(-1) }
+            </div>
+        )
+        for (const [i, p] of playerOpts.entries()) {
+            p_btns.push(
+                <div key={i} className="row mtb2">
+                <div className="f1"> {p.name} </div>
+                { editPlayerHcp(i) }
+                </div>
+            )
+        }
+        return (
+            <div className="mtb2">
+                Edit Hcp:
+                <div className="narrow center">
+                    {p_btns}
+                </div>
+            </div>
+        )
+    }
+
     function renderPlayerOpts() {
         var p_btns = [];
         for (const [i, p] of playerOpts.entries()) {
@@ -196,7 +262,7 @@ function StartMatch(props) {
             p_btns.push(
                 <div
                     key={i}
-                    className={"f1 brd cp" + sel}
+                    className={"f1 mtb2 brd cp" + sel}
                     onClick={() => {
                         var nps = playerSel.concat();
                         if (sel === " sel") nps.splice(nps.indexOf(i), 1);
@@ -210,7 +276,7 @@ function StartMatch(props) {
         return (
             <div className="mtb2">
                 Inviter andre:
-                <div className="">
+                <div className="narrow center">
                     {p_btns}
                 </div>
             </div>
@@ -229,10 +295,24 @@ function StartMatch(props) {
         return (
             <div className="">
                 {renderPlayerOpts()}
+                <div className="mtb2 cp brd" onClick={() => setPageState(EDIT_HCP)}>
+                    Neste
+                </div>
+                <div className="center cp brd" onClick={() => onClickShowMenu()}>
+                    Tilbake
+                </div>
+            </div>
+        )
+    }
+
+    if (pageState === EDIT_HCP) {
+        return (
+            <div className="">
+                {renderEditHcp()}
                 <div className="mtb2 cp brd" onClick={() => onClickPlay()}>
                     Start
                 </div>
-                <div className="center cp brd" onClick={() => onClickShowMenu()}>
+                <div className="center cp brd" onClick={() => setPageState(ADD_OTHERS)}>
                     Tilbake
                 </div>
             </div>

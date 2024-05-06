@@ -137,7 +137,8 @@ app.post("/test/load-course-players", (req, res) => {
     if (users[key].name !== data.user)
       u_arr.push({
         name: users[key].name,
-        in_round: users[key].in_round
+        in_round: users[key].in_round,
+        hcp: users[key].hcp
       });
   });
 
@@ -404,7 +405,7 @@ app.post("/test/start-match", (req, res) => {
 
   data.players.forEach(player => {
     let sg = calc_shots_given(
-      users[player.name].hcp,
+      player.hcp,
       course.slope[data.tee_id],
       course.verdi[data.tee_id],
       cp
@@ -412,9 +413,19 @@ app.post("/test/start-match", (req, res) => {
     console.log(player.name + " is given " + sg + " shots");
     match_state.players.push({
       name: player.name,
-      hcp: 20,//users[player.name].hcp,
+      hcp: player.hcp,
       shots_given: sg,
       holes_won: 0
+    });
+  });
+
+  data.players.forEach(player => {
+    users[player.name].hcp = player.hcp;
+    fs.writeFile("users/" + player.name, JSON.stringify(users[player.name]), (err) => {
+      if (err) {
+        console.log("user save to file error");
+        throw err;
+      }
     });
   });
 
@@ -483,9 +494,8 @@ app.post("/test/log-match-hole", (req, res) => {
         match_state.players[i].holes_won++;
       }
     }
+    match_state.hole++;
   }
-
-  match_state.hole++;
 
   res.json({
     match_state: match_state
