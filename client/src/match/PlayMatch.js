@@ -4,6 +4,7 @@ import './../App.css';
 
 const LOADING = 0
 const PLAYING = 1
+const CONFIRM_END = 2
 
 function PlayMatch(props) {
 
@@ -104,13 +105,20 @@ function PlayMatch(props) {
 
         const diff = match.players[0].holes_won - match.players[1].holes_won;
         var p_txt = ["   ", "   "];
-        if (diff > 0) p_txt[0] = diff + "UP";
-        else if (diff < 0) p_txt[1] = (-diff).toString() + "UP";
+        var p_mark = ["", ""];
+        if (diff > 0){
+            p_txt[0] = diff + "UP";
+            p_mark[0] = " sel";
+        }
+        else if (diff < 0){
+            p_txt[1] = (-diff).toString() + "UP";
+            p_mark[1] = " sel";
+        }
         var reg_shots = [];
         for (const [i, p] of match.players.entries()) {
             reg_shots.push(
                 <div className='mid row' key={i}>
-                    <div className='f2'>
+                    <div className={'f2'+p_mark[i]}>
                         {p_txt[i]}
                     </div>
                     <div className='f5'>
@@ -182,6 +190,34 @@ function PlayMatch(props) {
         })
             .then((res) => res.json())
             .then((data) => props.onFinish());
+    }
+
+    function renderEndButton() {
+        if (pageState == PLAYING) {
+            return (
+                <div className="row mtb2">
+                    <div className='mtb2 brd cp trans-mid' onClick={() => setPageState(CONFIRM_END)}>
+                        Avslutt
+                    </div>
+                </div>
+            )
+        }
+        else {
+            return (
+                    <div className="row mtb2 center trans-mid">
+                    <div className='f4 mtb2'>
+                            Avslutte?
+                        </div>
+                        <div className='f3 mtb2 brd cp' onClick={() => EndMatch()}>
+                            Ja
+                        </div>
+                        <div className='f3 mtb2 brd cp' onClick={() => setPageState(PLAYING)}>
+                            Nei
+                        </div>
+                    </div>
+            )
+        }
+
     }
 
     function renderPoints(points) {
@@ -335,11 +371,7 @@ function PlayMatch(props) {
                 <div className="col">
                     {scores}
                 </div>
-                <div className="row mtb2">
-                    <div className='mtb2 brd cp trans-mid' onClick={() => EndMatch()}>
-                        Avslutt
-                    </div>
-                </div>
+                {renderEndButton()}
             </div>
         )
     }
